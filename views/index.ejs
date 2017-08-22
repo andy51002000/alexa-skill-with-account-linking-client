@@ -1,0 +1,12 @@
+<% if (!user) { %>
+	<h2>Welcome! IoT control portal</h2>
+	<p>This is an amazing web application. We integrate alexa skill, and iot technology let you control your devices completely by voice. Imagin that you turn your monitor off by "ask my assistant, turn off my dislpay" when you are going to leave. If you wanna try it now, please login your amazon account first. Then add your devices in cloude. After that, enjoye it !!!</p>	
+	<a href="/auth/amazon" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Login</a>
+<% } else { %>
+	<h2>Hello, <%= user.displayName %>!</h2>
+	<p>Try it now. Just add your devices on cloude in few seconds</p>
+	<a href="/adddev" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Getting Started</a>
+<% } %>
+
+
+

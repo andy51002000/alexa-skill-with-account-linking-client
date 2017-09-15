@@ -22,23 +22,41 @@ exports.adddev = function (req, res) {
     res.render('adddev');
 }
 
-var dbHelper = require('../dynamodbHelper');
-var Users = new dbHelper('Users');
+
+var AWS = require("aws-sdk");
+AWS.config.loadFromPath('./config.json');
+var docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+
+var dbHelper = require('dynamodb-helper');
+var Users = new dbHelper(docClient, 'Users');
 
 exports.adddev_post = function (req, res) {
-    Users.find(req.user.id, function (data) {
+	
+	try{
+        Users.find(req.user.id, function (err,data) {
         console.log(data);
+
+        if(err){
+            //failed to get data or upload data
+            console.log("Error occured");            
+            res.render('adddev_r', { err: err.message });
+            return new Error(err);
+        }
+
         if (typeof data.Item === "undefined") {
             Users.putItem({ id: req.user.id, devs: [{ sn: req.body.sn, name: req.body.name }] });
         } else {
-            let devs = data.Item.devs;
+
             data.Item.devs.push({ sn: req.body.sn, name: req.body.name });
             Users.putItem(data.Item);
         }
 
+        res.render('adddev_s', { sn: req.body.sn });    
     })
-    //Users.putItem({id:req.user.id, sn:req.body.sn, name:req.body.name});
-    res.render('adddev_s', { sn: req.body.sn });
+	    
+	}catch(ex){
+		res.render('adddev_r', { sn: req.body.sn });
+	}
 
 
 }
